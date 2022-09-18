@@ -1,6 +1,6 @@
-#' Continuous annuities.
+#' Function to evaluate Continuous annuities.
 #'
-#'@description This function calculates the actuarial value of continuous annuities, given an actuarial table. Temporary and deferred annuities can be evaluated.
+#'@description This function calculates the actuarial value of continuous life insurance, given an actuarial table.
 #'
 #'
 #'@param actuarialtable	An actuarial table object.
@@ -8,6 +8,7 @@
 #'@param n Number of terms of the annuity, if missing annuity is intended to be paid until death.
 #'@param i Interest rate (default value the interest of the life table). (should be a scalar).
 #'@param m 	Deferring period. Assumed to be 1 whether missing.
+#'
 #'
 #'
 #'
