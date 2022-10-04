@@ -1,136 +1,114 @@
 #' @export
+cAxyn <- function(tablex,tabley,x,y,i,m,n, status = "joint"){
+
+  #conditions for tablex
+  if(missing(tablex)){
+    stop('REQUIRED TO DECLARE THE TABLE')
+  }
+
+  if(missing(tabley)){
+    stop('REQUIRED TO DECLARE THE TABLE')
+  }
+
+  if (!(class(tablex) %in% c("lifetable","actuarialtable","mdt")))
+    stop("Error! Only lifetable, actuarialtable or mdt classes are accepted")
 
 
-Axync <- function(actuarialtablex,actuarialtabley,x,y,x,i,m,n, status = "joint"){
+  if(length(tablex@x) != length(tablex@lx)) stop("length of x and lx must be equal")
 
-  if(missing(actuarialtabley)){
+  #conditions for function
+  if(missing(x)){
+    stop('REQUIRED TO DECLARE THE AGE "x"')
+  }
+  if(missing(y)){
+    stop('REQUIRED TO DECLARE THE AGE "y"')
+  }
 
-
-
+  if(missing(n)){
+    w=length(tablex@lx)-1
+    max=w-x
   }else {
-                            if(status =="joint") {
-                              if(missing(n)){
+    max= n
+  }
 
-                                if(missing(m)){
+  if(missing(m)){
+    m=0
+  }
 
-                                  w=length(actuarialtablex@lx)-1
-                                  min=0
-                                  max=w-x
-                                  d=log(1+i)
-                                  ft <- function(t) {
-                                    (exp(-d*t))*(actuarialtablex@lx[x+t+1]/actuarialtablex@lx[x+1])*(actuarialtabley@ly[y+t+1]/actuarialtabley@ly[y+1])*(((actuarialtablex@lx[x+t-1+1]-actuarialtablex@lx[x+t+1+1])/(2*actuarialtablex@lx[x+t+1]))+((actuarialtabley@ly[y+t-1+1]-actuarialtabley@ly[y+t+1+1])/(2*actuarialtabley@ly[y+t+1])))}
-                                  a=integrate(ft,min,max)
-                                  A1xynjc=a$value
-                                  A1xynjc
-                                }else {
+  if(missing(i)){
+    i=0.03
+  }
 
-                                  w= length(actuarialtablex@lx)-1
-                                  min=m
-                                  max= (w-x)
-                                  d=log(1+i)
-                                  ft <- function(t) {
-                                    (exp(-d*t))*(actuarialtablex@lx[x+t+1]/actuarialtablex@lx[x+1])*(actuarialtabley@ly[y+t+1]/actuarialtabley@ly[y+1])*(((actuarialtablex@lx[x+t-1+1]-actuarialtablex@lx[x+t+1+1])/(2*actuarialtablex@lx[x+t+1]))+((actuarialtabley@ly[y+t-1+1]-actuarialtabley@ly[y+t+1+1])/(2*actuarialtabley@ly[y+t+1])))}
-                                  a=integrate(ft,min,max)
-                                  A1xynjc=a$value
-                                  A1xynjc
-                                }
+  if(status== "j"){
+    status = "joint"
+  }
+
+  if(status== "l"){
+    status = "last"
+  }
+
+  #function calculation
+  if(missing(tabley)){
+                  if(status=="joint"){
+
+                    min=m
+                    d=log(1+i)
+                    ft <- function(t) {
+                      (exp(-d*t))*(tablex@lx[x+t+1]/tablex@lx[x+1])*(tablex@lx[y+t+1]/tablex@lx[y+1])*(((tablex@lx[x+t-1+1]-tablex@lx[x+t+1+1])/(2*tablex@lx[x+t+1]))+((tablex@lx[y+t-1+1]-tablex@lx[y+t+1+1])/(2*tablex@lx[y+t+1])))}
+                    a=integrate(ft,min,max,subdivisions= 1000)
+                    A1xynjc=a$value
+                    A1xynjc
+                  }else if(status=="last"){
+
+                    min=m
+                    d=log(1+i)
+                    ft <- function(t) {
+                      (exp(-d*t))*(((tablex@lx[x+t-1+1]-tablex@lx[x+t+1+1])/2*tablex@lx[x+1])*((tablex@lx[y+1]-tablex@lx[y+t+1])/tablex@lx[y+1])+((tablex@lx[y+t-1+1]-tablex@lx[y+t+1+1])/2*tablex@lx[y+1])*((tablex@lx[x+1]-tablex@lx[x+t+1])/tablex@lx[x+1]))
+                    }
+                    a=integrate(ft,min,max,subdivisions= 1000)
+                    A1xynlc=a$value
+                    A1xynlc
+                  } else {
+                    stop('Parameters other than "joint" and "last"')
+                  }
+  }else{
 
 
-                              }else {
-                                if(missing(m)){
-
-                                  w=length(actuarialtablex@lx)-1
-                                  min=0
-                                  max=n
-                                  d=log(1+i)
-                                  ft <- function(t) {
-                                    (exp(-d*t))*(actuarialtablex@lx[x+t+1]/actuarialtablex@lx[x+1])*(actuarialtabley@ly[y+t+1]/actuarialtabley@ly[y+1])*(((actuarialtablex@lx[x+t-1+1]-actuarialtablex@lx[x+t+1+1])/(2*actuarialtablex@lx[x+t+1]))+((actuarialtabley@ly[y+t-1+1]-actuarialtabley@ly[y+t+1+1])/(2*actuarialtabley@ly[y+t+1])))}
-                                  a=integrate(ft,min,max)
-                                  A1xynjc=a$value
-                                  A1xynjc
-
-                                }else {
-
-                                  w= length(actuarialtablex@lx)-1
-                                  min=m
-                                  max= (m+n)
-                                  d=log(1+i)
-                                  ft <- function(t) {
-                                    (exp(-d*t))*(actuarialtablex@lx[x+t+1]/actuarialtablex@lx[x+1])*(actuarialtabley@ly[y+t+1]/actuarialtabley@ly[y+1])*(((actuarialtablex@lx[x+t-1+1]-actuarialtablex@lx[x+t+1+1])/(2*actuarialtablex@lx[x+t+1]))+((actuarialtabley@ly[y+t-1+1]-actuarialtabley@ly[y+t+1+1])/(2*actuarialtabley@ly[y+t+1])))}
-                                  a=integrate(ft,min,max)
-                                  A1xynjc=a$value
-                                  A1xynjc
-                                }
-                              }
+    #conditions for tabley
 
 
 
-
-                            }else if(status =="last"){
-                              if(missing(n)){
-
-                                if(missing(m)){
-
-                                  w=length(actuarialtablex@lx)-1
-                                  min=0
-                                  max=w-x
-                                  d=log(1+i)
-                                  ft <- function(t) {
-                                    (exp(-d*t))*(((actuarialtablex@lx[x+t-1+1]-actuarialtablex@lx[x+t+1+1])/2*actuarialtablex@lx[x+1])*((actuarialtabley@ly[y+1]-actuarialtabley@ly[y+t+1])/actuarialtabley@ly[y+1])+((actuarialtabley@ly[y+t-1+1]-actuarialtabley@ly[y+t+1+1])/2*actuarialtabley@ly[y+1])*((actuarialtablex@lx[x+1]-actuarialtablex@lx[x+t+1])/actuarialtablex@lx[x+1]))
-                                  }
-                                  a=integrate(ft,min,max)
-                                  A1xynlc=a$value
-                                  A1xynlc
-
-                                }else {
-
-                                  w= length(actuarialtablex@lx)-1
-                                  min=m
-                                  max= (w-x)
-                                  d=log(1+i)
-                                  ft <- function(t) {
-                                    (exp(-d*t))*(((actuarialtablex@lx[x+t-1+1]-actuarialtablex@lx[x+t+1+1])/2*actuarialtablex@lx[x+1])*((actuarialtabley@ly[y+1]-actuarialtabley@ly[y+t+1])/actuarialtabley@ly[y+1])+((actuarialtabley@ly[y+t-1+1]-actuarialtabley@ly[y+t+1+1])/2*actuarialtabley@ly[y+1])*((actuarialtablex@lx[x+1]-actuarialtablex@lx[x+t+1])/actuarialtablex@lx[x+1]))
-                                  }
-                                  a=integrate(ft,min,max)
-                                  A1xynlc=a$value
-                                  A1xynlc
-                                }
+    if (!(class(tabley) %in% c("lifetable","actuarialtable","mdt")))
+      stop("Error! Only lifetable, actuarialtable or mdt classes are accepted")
 
 
-                              }else {
-                                if(missing(m)){
-
-                                  w=length(actuarialtablex@lx)-1
-                                  min=0
-                                  max=n
-                                  d=log(1+i)
-                                  ft <- function(t) {
-                                    (exp(-d*t))*(((actuarialtablex@lx[x+t-1+1]-actuarialtablex@lx[x+t+1+1])/2*actuarialtablex@lx[x+1])*((actuarialtabley@ly[y+1]-actuarialtabley@ly[y+t+1])/actuarialtabley@ly[y+1])+((actuarialtabley@ly[y+t-1+1]-actuarialtabley@ly[y+t+1+1])/2*actuarialtabley@ly[y+1])*((actuarialtablex@lx[x+1]-actuarialtablex@lx[x+t+1])/actuarialtablex@lx[x+1]))
-                                  }
-                                  a=integrate(ft,min,max)
-                                  A1xynlc=a$value
-                                  A1xynlc
-
-                                }else {
-
-                                  w= length(actuarialtablex@lx)-1
-                                  min=m
-                                  max= (m+n)
-                                  d=log(1+i)
-                                  ft <- function(t) {
-                                    (exp(-d*t))*(((actuarialtablex@lx[x+t-1+1]-actuarialtablex@lx[x+t+1+1])/2*actuarialtablex@lx[x+1])*((actuarialtabley@ly[y+1]-actuarialtabley@ly[y+t+1])/actuarialtabley@ly[y+1])+((actuarialtabley@ly[y+t-1+1]-actuarialtabley@ly[y+t+1+1])/2*actuarialtabley@ly[y+1])*((actuarialtablex@lx[x+1]-actuarialtablex@lx[x+t+1])/actuarialtablex@lx[x+1]))
-                                  }
-                                  a=integrate(ft,min,max)
-                                  A1xynlc=a$value
-                                  A1xynlc
-                                }
-                              }
+    if(length(tabley@x) != length(tabley@lx)) stop("length of x and lx must be equal")
 
 
-                            }else {
-                              stop('Parameters other than "joint" and "last"')
-                            }
-                        }
+                  if(status=="joint"){
+
+                    min=m
+                    d=log(1+i)
+                    ft <- function(t) {
+                      (exp(-d*t))*(tablex@lx[x+t+1]/tablex@lx[x+1])*(tabley@lx[y+t+1]/tabley@lx[y+1])*(((tablex@lx[x+t-1+1]-tablex@lx[x+t+1+1])/(2*tablex@lx[x+t+1]))+((tabley@lx[y+t-1+1]-tabley@lx[y+t+1+1])/(2*tabley@lx[y+t+1])))}
+                    a=integrate(ft,min,max,subdivisions= 1000)
+                    A1xynjc=a$value
+                    A1xynjc
+                  }else if(status=="last"){
+
+                    min=m
+                    d=log(1+i)
+                    ft <- function(t) {
+                      (exp(-d*t))*(((tablex@lx[x+t-1+1]-tablex@lx[x+t+1+1])/2*tablex@lx[x+1])*((tabley@lx[y+1]-tabley@lx[y+t+1])/tabley@lx[y+1])+((tabley@lx[y+t-1+1]-tabley@lx[y+t+1+1])/2*tabley@lx[y+1])*((tablex@lx[x+1]-tablex@lx[x+t+1])/tablex@lx[x+1]))
+                    }
+                    a=integrate(ft,min,max,subdivisions= 1000)
+                    A1xynlc=a$value
+                    A1xynlc
+                  } else {
+                    stop('Parameters other than "joint" and "last"')
+                  }
+                }
+
 }
 
 
