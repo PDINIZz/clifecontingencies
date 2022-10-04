@@ -1,104 +1,110 @@
-#' Function to evaluate continuos life insurance.
-#'
-#'@description This function calculates the actuarial value of continuous annuities, given an actuarial table. Temporary and deferred annuities can be evaluated.
-#'
-#'
-#'@param actuarialtable	An actuarial table object.
-#'@param x Age of the annuitant.
-#'@param n Number of terms of the annuity, if missing annuity is intended to be paid until death.
-#'@param i Interest rate (default value the interest of the life table). (should be a scalar).
-#'@param m 	Deferring period. Assumed to be 1 whether missing.
-#'
-#'
-#'
-#'
-
-
-
 #' @export
-cAxn <- function(actuarialtable,x,n,i,m){
+cAxn <- function(table,x,n,i,m){
+
+
+  #conditions
 
   if(missing(table)){
     stop('REQUIRED TO DECLARE THE TABLE')
-
   }
+
+  if (!(class(table) %in% c("lifetable","actuarialtable","mdt")))
+    stop("Error! Only lifetable, actuarialtable or mdt classes are accepted")
+
+  if(length(table@x) != length(table@lx)) stop("length of x and lx must be equal")
+
 
   if(missing(x)){
-    stop('REQUIRED TO DECLARE THE AGE')
-
+    stop('REQUIRED TO DECLARE THE AGE "x"')
   }
-  .
+  if(length(x) <= 0)
+  { stop("x is of length zero")}
 
+  if(missing(n)){
+    w=length(table@lx)-1
+    max=w-x
+  }else {
+    max= n
+  }
+
+  if(missing(m)){
+    m=0
+  }
 
   if(missing(i)){
-    stop('REQUIRED TO DECLARE THE AGE')
+    i=0.03
+  }
 
+  #function calculation
+
+  min=m
+  d=log(1+i)
+  ft <- function(t) {
+
+    (exp(-d*t))*((table@lx[x+t+1])/table@lx[x+1])*((table@lx[x+t-1+1]-table@lx[x+t+1+1])/(2*table@lx[x+t+1]))
+  }
+  A=integrate(ft,min,max,subdivisions= 1000)
+  rAxc=A$value
+  rAxc
+
+}
+
+#' @export
+caxn <- function(table,x,n,i,m){
+
+  #conditions
+  if(isS4(table) == FALSE){
+    stop(' trying to get slot "lx" from an object (class "data.frame") that is not an S4 object')
+  }
+
+  if(missing(table)){
+    stop('REQUIRED TO DECLARE THE TABLE')
+  }
+
+  if(is.null(table@lx)){
+    stop('"lx" not declared in table')
+  }
+
+  if(is.numeric(table@lx == FALSE)){
+    stop('"lx" not numeric')
+  }
+
+  if(length(table@x) != length(table@lx)) stop("length of x and lx must be equal")
+
+  if(length(x) <= 0){ stop("x is of length zero")}
+
+
+  if(missing(x)){
+    stop('REQUIRED TO DECLARE THE AGE "x"')
   }
 
   if(missing(n)){
-
-    if(missing(m)){
-
-      w=length(tvbrf@lx)-1
-      min=0
-      max=w-x
-      d=log(1+i)
-      ft <- function(t) {
-
-        (exp(-d*t))*((tvbrf@lx[x+t-1+1]-tvbrf@lx[x+t+1+1])/(2*tvbrf@lx[x+1]))
-      }
-      A=integrate(ft,min,max,subdivisions= 1000)$value
-      rAxc=A$value
-      rAxc
-
-    }else {
-
-      w= length(tvbrf@lx)-1
-      min=m
-      max= (w-x)
-      d=log(1+i)
-      ft <- function(t) {
-
-        (exp(-d*t))*((tvbrf@lx[x+t-1+1]-tvbrf@lx[x+t+1+1])/(2*tvbrf@lx[x+1]))
-      }
-      A=integrate(ft,min,max,subdivisions= 1000)$value
-      rAxc=A$value
-      rAxc
-    }
-
-
+    w=length(table@lx)-1
+    max=w-x
   }else {
-    if(missing(m)){
-
-      w=length(tvbrf@lx)-1
-      min=0
-      max=n
-      d=log(1+i)
-      ft <- function(t) {
-
-        (exp(-d*t))*((tvbrf@lx[x+t-1+1]-tvbrf@lx[x+t+1+1])/(2*tvbrf@lx[x+1]))
-      }
-      A=integrate(ft,min,max,subdivisions= 1000)$value
-      rAxc=A$value
-      rAxc
-
-    }else {
-
-      w= length(tvbrf@lx)-1
-      min=m
-      max= (m+n)
-      d=log(1+i)
-      ft <- function(t) {
-
-        (exp(-d*t))*((tvbrf@lx[x+t-1+1]-tvbrf@lx[x+t+1+1])/(2*tvbrf@lx[x+1]))
-      }
-      A=integrate(ft,min,max,subdivisions= 1000)$value
-      rAxc=A$value
-      rAxc
-    }
+    max= n
   }
-}
 
+  if(missing(m)){
+    m=0
+  }
+
+  if(missing(i)){
+    i=0.03
+  }
+
+  #function calculation
+
+  min=m
+  d=log(1+i)
+  ft <- function(t) {
+    exp(-d*t)*(table@lx[x+t+1]/table@lx[x+1])
+  }
+  a=integrate(ft,min,max,subdivisions= 1000)
+  raxc=a
+  raxc$value
+
+}
 
 
 
