@@ -75,22 +75,14 @@ The function is provided as is, without any warranty regarding the accuracy of c
 #example for cAxyn
           #create acturial table using the "lifecontingencies" pack
           at2000m= read.table("at2000m.txt",h = T)
-          actuarialtable = probs2lifetable(at2000m$qx,radix = 1000,type = "qx")
+          actuarialtablem = probs2lifetable(at2000m$qx,radix = 1000,type = "qx")
+          actuarialtablef = probs2lifetable(at2000f$qx,radix = 1000,type = "qx")
           #or a table class as "data.frame" with an lx column
           #evaluate the value of continuos life insurance on two heads.
-          cAxyn(actuarialtable,x=40,y=10, n=20,m=10, i=0.03, status = "last")}
+          cAxyn(actuarialtablem,actuarialtablef,x=40,y=10, n=20,m=10, i=0.03, status = "last")}
 #example for caxyn
 
           #evaluate the value of continuous annuities on two heads.
-          caxyn(actuarialtable,x=40,y=10, n=20,m=10, i=0.03, status = "joint")}
+          caxyn(actuarialtablem,actuarialtablef,x=40,y=10, n=20,m=10, i=0.04, status = "joint")}
 
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory (show via RShowDoc("KEYWORDS")):
-% \keyword{ ~kwd1 }
-% \keyword{ ~kwd2 }
-% Use only one keyword per line.
-% For non-standard keywords, use \concept instead of \keyword:
-% \concept{ ~cpt1 }
-% \concept{ ~cpt2 }
-% Use only one concept per line.
