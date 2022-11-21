@@ -2,18 +2,21 @@
 title: "sla"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{sla}
+  %\VignetteIndexEntry{PENSION}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+library(clifecontingencies)
+lifetable = read.table("homenss.txt",header = T)
+
+datasets::(at2000m)
+
+tables= probs2lifetable(x$qx,radix=10000,type = "qx")
+tables
+caxn(tables,x=3)
+
 ```
 
-```{r setup}
-library(clifecontingencies)
-```
+

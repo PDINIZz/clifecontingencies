@@ -3,30 +3,26 @@
 \alias{caxyn}
 
 \title{
-Functions to evaluate continuos life insurance and continuos annuities on two heads.
+On two heads continuos life insurance and continuos annuities .
 }
 \description{
 These functions evaluates life insurances on two heads.
 }
 \usage{
-cAxyn(tablex, tabley, x, y, i, m, n, status = "joint")
+cAxyn(tableslist, x, n, i, m, status = "joint")
 
-caxyn(tablex, tabley, x, y, i, m, n, status = "joint")
+caxyn(tableslist, x, n, i, m, status = "joint")
 }
 
 \arguments{
-  \item{tablex}{
-An actuarial table object or a table class as "data.frame" with an lx column.
+  \item{tableslist}{
+A list whose elements are either lifetable or actuarialtable class objects.
 }
-  \item{tabley}{
-An actuarial table object or a table class as "data.frame" with an lx column.Tablex is assumed to be used if tabley is absent.
-}
+
   \item{x}{
-Age of life X.
+A vector of the same size of tableList that contains the initial ages.
 }
-  \item{y}{
-Age of life Y.
-}
+
   \item{i}{
 Interest rate. Assumed to be 0.03 whether missing..
 }
@@ -34,7 +30,7 @@ Interest rate. Assumed to be 0.03 whether missing..
 Deferring period. Default value is zero.
 }
   \item{n}{
-Fractional payments or periods where insurance is payable.
+Lenght of the insurance.
 }
   \item{status}{
 
@@ -44,7 +40,7 @@ Either "joint" for the joint-life status model or "last" for the last-survivor s
 
 
 \details{
-Actuarial mathematics book formulas has been implemented.
+In theory, these functions apply the same concept of life insurances on two head.
 }
 \value{
 A numeric value.
@@ -52,19 +48,19 @@ A numeric value.
 \references{
             DICKSON, D. C.; HARDY, M. R.; WATERS, H. R. Actuarial mathematics for life
             contingent risks. 2. ed. United Kingdom: Cambridge University Press, 2016.
-                      }
+
+
+          FERREIRA, Paulo Pereira. Matemática atuarial: risco de pessoas. Rio de Janeiro: ENS, 2019.
+
+                     PROMISLOW, S. D. Fundamentals of actuarial mathematics. [S.l.]: John Wiley & Sons, 2014. }
 
 \author{
         Pedro Henricky S. Diniz
 }
 
-\note {
-
-}
 \section{Warning }{
 The function is provided as is, without any warranty regarding the accuracy of calculations. The author disclaims any liability for eventual losses arising from direct or indirect use of this software.
 }
-
 
 
 \seealso{
@@ -73,16 +69,14 @@ The function is provided as is, without any warranty regarding the accuracy of c
 
 \examples{
 #example for cAxyn
-          #create acturial table using the "lifecontingencies" pack
-          at2000m= read.table("at2000m.txt",h = T)
-          actuarialtablem = probs2lifetable(at2000m$qx,radix = 1000,type = "qx")
-          actuarialtablef = probs2lifetable(at2000f$qx,radix = 1000,type = "qx")
-          #or a table class as "data.frame" with an lx column
+assume at2000f and at2000m are examples of life table
+          tables = c(at2000f,at2000m)
+          ages=c(20,30)
           #evaluate the value of continuos life insurance on two heads.
-          cAxyn(actuarialtablem,actuarialtablef,x=40,y=10, n=20,m=10, i=0.03, status = "last")}
+          cAxyn(tables,x=ages, n=20,m=10, i=0.03, status = "last")
 #example for caxyn
 
           #evaluate the value of continuous annuities on two heads.
-          caxyn(actuarialtablem,actuarialtablef,x=40,y=10, n=20,m=10, i=0.04, status = "joint")}
+          caxyn(tables,x=ages, n=20,m=10, i=0.03, status = "joint")
 
 }
