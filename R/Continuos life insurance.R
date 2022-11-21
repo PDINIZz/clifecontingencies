@@ -89,7 +89,7 @@ cAxn <- function(tableslist,x,n,i,m){
     min=m1
     d=log(1+i1)
     ft <- function(t) {
-      (exp(-d*t))*((tableslist1@lx[x1+t+1])/tableslist1@lx[x1+1])*((tableslist1@lx[x1+t-1+1]-tableslist1@lx[x1+t+1+1])/(2*tableslist1@lx[x1+t+1]))*(i1/d)
+      (exp(-d*t))*((tableslist1@lx[x1+t+1])/tableslist1@lx[x1+1])*((tableslist1@lx[x1+t-1+1]-tableslist1@lx[x1+t+1+1])/(2*tableslist1@lx[x1+t+1]))
     }
     a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE,abs.tol = TRUE)
     a=a$value
