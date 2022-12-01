@@ -14,7 +14,7 @@ Package: \tab clifecontingencies\cr
 Type: \tab Package\cr
 Version: \tab 0.0.1\cr
 Date: \tab 2022-12-01\cr
-License: \tab ?\cr
+License: \tab CC0\cr
 LazyLoad: \tab true\cr
 }
 
@@ -34,7 +34,7 @@ Maintainer: <henricky.profissional@gmail.com>
 
                       }
 \seealso{
-	\code{\link{cAxn}}, \code{\link{cAxyn}}
+	\code{\link{cAxn}}, \code{\link{cAxyzn}}
 }
 \section{Warning }{
 	This package and functions herein are provided as is, without any guarantee regarding the	accuracy of calculations. The author disclaims any liability arising by any losses due to direct or indirect use of this package. }

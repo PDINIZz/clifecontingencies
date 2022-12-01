@@ -9,9 +9,9 @@ Functions to evaluate continuos life insurance and continuos annuities.
 These functions evaluates continuos life insurance and continuos annuities.
 }
 \usage{
-cAxn(tablestest, x, i, m, n)
+cAxn(tableslist, x, i, m, n)
 
-caxyn(tablestest, x i, m, n)
+caxn(tableslist, x, i, m, n)
 }
 
 \arguments{
@@ -58,7 +58,7 @@ The function is provided as is, without any warranty regarding the accuracy of c
 
 
 \seealso{
-{\code{\link{cAxyn}}} or {\code{\link{caxyn}}}
+{\code{\link{cAxyzn}}} or {\code{\link{caxyzn}}}
 }
 
 \examples{

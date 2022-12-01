@@ -1,5 +1,8 @@
+#'@import lifecontingencies
+#'@import methods
+#'@importFrom stats integrate
 #' @export
-cAxn <- function(tableslist,x,n,i,m){
+caxn <- function(tableslist,x,i,m,n){
 
   #conditions
 
@@ -12,9 +15,12 @@ cAxn <- function(tableslist,x,n,i,m){
   }
 
   classlist <- sapply(tableslist, class)
-  if(any(!classlist %in% c("lifetable","actuarialtable"))){
+   if(any(!classlist %in% c("lifetable","actuarialtable"))){
     stop("Error! A list of lifetableslist objects is required")
-  }
+    }
+
+
+
 
   if(missing(x)){
     stop('REQUIRED TO DECLARE THE AGE "x"')
@@ -22,19 +28,19 @@ cAxn <- function(tableslist,x,n,i,m){
 
 
   if(missing(i)){
-    i=NaN
+    i=0.03
   }
 
   if(missing(m)){
-    m=NaN
+    m=0
   }
-
   if(missing(n)){
-    n=NaN
+    n=NULL
   }
 
 
   raxc=0
+  b=1
 
   #conditions for function
   for (j in 1:length(x)) {
@@ -47,7 +53,10 @@ cAxn <- function(tableslist,x,n,i,m){
     m1=m[j]
     n1=n[j]
     i1=i[j]
-    w=length(tableslist1@lx)-1
+    w=length(tableslist1@lx)
+
+
+
 
     if(length(tableslist1@x) != length(tableslist1@lx)) {
       stop("length of x and lx must be equal")
@@ -56,30 +65,44 @@ cAxn <- function(tableslist,x,n,i,m){
     if(is.na(x1)){stop("check x has NaN")}
 
     if(is.na(m1)){
-      m1=0
+      m1=m[1]
+    }
+
+    if(is.null(n1)){
+      n1=0
+      max= w-x1
+    }else{
+      if(is.na(n1)){
+        n1=n[1]
+      }
+      max= n1+m1
     }
 
 
-    if(is.na(n1)){
-      n1=0
-      max=w-x1
-
-    }else {
-      max= n1+m1
-
+    if(is.na(i1)){
+      i1=i[1]
     }
 
     if(any(x1 < 0, n1 < 0, m1 < 0)){
-      stop("negative values provided in x, n or m")
+      stop("( negative values provided in x, n or m")
     }
 
-    if(any(x1>=w,n1+x1>w,n1+m1+x1>w)){
-      raxc=0
-      return(raxc)
-    }
+    if(any(n1+x1>w,n1+m1+x1>w)){
+      if(any(x1<w,x1+m1<w)){
+        n1=w-(x1+m1)
+        max=n1
+      }
+      if(any(x1>=w,x1+m1>=w)){
+        b=0
 
-    if(is.na(i1)){
-      i1=0.03
+      }
+
+      }
+
+
+
+    if(any(is.infinite(x1), is.infinite(n1), is.infinite(m1))){
+      stop("infinite values provided in x, n or m")
     }
 
 
@@ -88,13 +111,18 @@ cAxn <- function(tableslist,x,n,i,m){
 
     min=m1
     d=log(1+i1)
-    ft <- function(t) {
-      (exp(-d*t))*((tableslist1@lx[x1+t+1])/tableslist1@lx[x1+1])*((tableslist1@lx[x1+t-1+1]-tableslist1@lx[x1+t+1+1])/(2*tableslist1@lx[x1+t+1]))
+    ft <- function(s) {
+      s1=s
+      exp(-d*s)*pxt(tableslist1,x=x1,t=s1)
     }
-    a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE,abs.tol = TRUE)
-    a=a$value
-    raxc[j]=a
+
+      a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE)
+      raxc[j]=a$value*b
+
+
   }
+  b=1
   raxc
 }
+
 

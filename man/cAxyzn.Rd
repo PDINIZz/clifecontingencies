@@ -1,17 +1,17 @@
-\name{cAxyn & caxyn}
-\alias{cAxyn}
-\alias{caxyn}
+\name{cAxyzn & caxyzn}
+\alias{cAxyzn}
+\alias{caxyzn}
 
 \title{
-On two heads continuos life insurance and continuos annuities .
+multiple life continuos life insurance and continuos annuities .
 }
 \description{
 These functions evaluates life insurances on two heads.
 }
 \usage{
-cAxyn(tableslist, x, n, i, m, status = "joint")
+cAxyzn(tableslist,x,i,m,n, status = "joint")
 
-caxyn(tableslist, x, n, i, m, status = "joint")
+caxyzn(tableslist,x,i,m,n, status = "joint")
 }
 
 \arguments{
@@ -68,15 +68,15 @@ The function is provided as is, without any warranty regarding the accuracy of c
 }
 
 \examples{
-#example for cAxyn
-assume at2000f and at2000m are examples of life table
+#example for cAxyzn
+#assume at2000f and at2000m are examples of life table
           tables = c(at2000f,at2000m)
           ages=c(20,30)
           #evaluate the value of continuos life insurance on two heads.
-          cAxyn(tables,x=ages, n=20,m=10, i=0.03, status = "last")
-#example for caxyn
+          cAxyzn(tables,x=ages, n=20,m=10, i=0.03, status = "last")
+#example for caxyzn
 
           #evaluate the value of continuous annuities on two heads.
-          caxyn(tables,x=ages, n=20,m=10, i=0.03, status = "joint")
+          caxyzn(tables,x=ages, n=20,m=10, i=0.03, status = "joint")
 
 }

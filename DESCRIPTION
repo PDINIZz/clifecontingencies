@@ -2,18 +2,18 @@ Package: clifecontingencies
 Type: Package
 Title: Continuous actuarial Mathematics for Life Contingencies
 Version: 0.0.1
-Authors: c(person("Pedro Henricky", "Diniz", role = c("aut", "cre"),
+Author: c(person("Pedro Henricky", "Diniz", role = c("aut", "cre"),
     email = "henricky.profissional@gmail.com"),
     person("Luiz Carlos", "Junior", role = "cre",email = "luiz.atuario@gmail.com"))
 Maintainer: The package maintainer <henricky.profissional@gmail.com>
 Description: The clifecontingencies package performs actuarial mathematics calculation. The main objective of the package is to provide tools to carry out continuous calculation of life insurance.
-Depends:R (>= 4.0),methods
-Imports:lifecontingencies
-License: What license is it under?????
+Depends:R (>= 4.0)
+Imports:lifecontingencies,stats,methods
+License: CC0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.0
 Suggests: 
     knitr,
     rmarkdown
-VignetteBuilder: knitr
+
