@@ -25,11 +25,19 @@ cAxyzn <- function(tableslist,x,i,m,n, status ="joint"){
   }
 
   #conditions for function
+  b=1
   k=0
   for(ll in 1:length(x)){
     if(k<=x[ll]){
       k=x[ll]
       j=ll
+    }
+  }
+  k1=100000
+  for(ll1 in 1:length(x)){
+    if(k1>=x[ll1]){
+      k1=x[ll1]
+      j1=ll1
     }
   }
 
@@ -47,9 +55,11 @@ cAxyzn <- function(tableslist,x,i,m,n, status ="joint"){
   if(missing(n)){
     n=0
     max=w-x[j]
+    max1=w1-x[j1]
   }else {
     n=n
     max= n+m
+    max1=n+m
 
   }
 
@@ -66,8 +76,7 @@ cAxyzn <- function(tableslist,x,i,m,n, status ="joint"){
       max=n
     }
     if(any(x>=w,x+m>=w)){
-      rAxyc=0
-      return(rAxyc)}
+      b=0}
   }
   rAxyc=0
   if(status =="joint"){
@@ -105,7 +114,7 @@ cAxyzn <- function(tableslist,x,i,m,n, status ="joint"){
         s1=s[[1]]
         exp(-d*s)*(pxyzt(tableslist,x=x,t=s1,status="last"))
       }
-      a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE)
+      a=integrate(ft,min,max1,subdivisions= 10000,stop.on.error = FALSE)
       a=a$value
       rAxyc=1-(d*a)
 
@@ -116,7 +125,7 @@ cAxyzn <- function(tableslist,x,i,m,n, status ="joint"){
         s1=s[[1]]
         exp(-d*s)*pxyzt(tableslist,x=x,t=s1,status="last")*((-1/2)*(log(pxyzt(tableslist,x=x+s1-1,t=1,status="last"))+log(pxyzt(tableslist,x=x+s1,t=1,status="last"))))
       }
-      a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE)
+      a=integrate(ft,min,max1,subdivisions= 10000,stop.on.error = FALSE)
       a=a$value
       rAxyc=a
     }
