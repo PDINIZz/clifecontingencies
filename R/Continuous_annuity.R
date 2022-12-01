@@ -118,10 +118,10 @@ caxn <- function(tableslist,x,i,m,n){
 
       a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE)
       raxc[j]=a$value*b
-
+      b=1
 
   }
-  b=1
+
   raxc
 }
 

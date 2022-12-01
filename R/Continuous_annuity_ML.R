@@ -25,16 +25,27 @@ caxyzn <- function(tableslist,x,i,m,n, status ="joint"){
   }
 
   #conditions for function
+  b=1
   k=0
+
   for(ll in 1:length(x)){
     if(k<=x[ll]){
       k=x[ll]
       j=ll
     }
   }
+  k1=100000
+  for(ll1 in 1:length(x)){
+    if(k1>=x[ll1]){
+      k1=x[ll1]
+      j1=ll1
+    }
+  }
+
+
 
   w=length(tableslist[[j]]@lx)
-
+  w1=length(tableslist[[j1]]@lx)
   if(missing(x)){
     stop('REQUIRED TO DECLARE THE AGE "x"')
   }
@@ -47,9 +58,11 @@ caxyzn <- function(tableslist,x,i,m,n, status ="joint"){
   if(missing(n)){
     n=0
     max=w-x[j]
+    max1=w1-x[j1]
   }else {
     n=n
     max= n+m
+    max1=n+m
 
   }
 
@@ -62,40 +75,38 @@ caxyzn <- function(tableslist,x,i,m,n, status ="joint"){
   }
   if(any(n+x>w,n+m+x>w)){
     if(any(x<w,x+m<w)){
-      n1=w-(x+m)
+      n=w-(x+m)
       max=n
     }
     if(any(x>=w,x+m>=w)){
-      raxc=0
-      return(raxc)}
+      b=0
+      }
   }
-    if(n==0){
-      if(status =="joint"){
-        d=log(1+i)
 
-        caxyc=(axyzn(tableslist,x=x,m=m,i=i,payment = "arrears"))+0.5+((1/12)*(d*(log(pxyzt(tableslist,x=x+m-1,t=1))+log(pxyzt(tableslist,x=x+m,t=1)))))
-        return(caxyc)
+      min=m
+      d=log(1+i)
+      raxyzc=0
+      if(status =="joint"){
+
+        ft <- function(s) {
+          s1=s[[1]]
+          exp(-d*s)*pxyzt(tableslist,x=x,t=s1)
+        }
+
+        a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE)
+        raxyzc=a$value+0.5+((1/11)*(d*(log(pxyzt(tableslist,x=x+m-1,t=1))+log(pxyzt(tableslist,x=x+m,t=1)))))
       }
 
       if(status=="last"){
-        d=log(1+i)
-        caxyc=(axyzn(tableslist,x=x,i=i,m=m, status="last",payment = "arrears"))+0.5+((1/12)*(d*(log(pxyzt(tableslist,x=x+m-1,t=1,status = "last"))+log(pxyzt(tableslist,x=x+m,t=1,status = "last")))))
-        return(caxyc)
+        ft <- function(s) {
+          s1=s[[1]]
+          exp(-d*s)*pxyzt(tableslist,x=x,t=s1,status="last")
+        }
+
+        a=integrate(ft,min,max1,subdivisions= 10000,stop.on.error = FALSE)
+        raxyzc=a$value*b
       }
+      b=1
+    raxyzc
 
-    }else{
-
-      if(status =="joint"){
-        d=log(1+i)
-
-        caxyc=(axyzn(tableslist,x=x,m=m,n=n,i=i,payment = "arrears"))+0.5+((1/12)*(d*(log(pxyzt(tableslist,x=x+m-1,t=1))+log(pxyzt(tableslist,x=x+m,t=1)))))
-        return(caxyc)
-      }
-
-      if(status=="last"){
-        d=log(1+i)
-        caxyc=axyzn(tableslist,x=x,i=i,n=n,m=m,status="last",payment = "arrears")+0.5+((1/12)*(d*(log(pxyzt(tableslist,x=x+m-1,t=1,status = "last"))+log(pxyzt(tableslist,x=x+m,t=1,status = "last")))))
-        return(caxyc)
-
-      }
-    }}
+    }

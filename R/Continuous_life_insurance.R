@@ -97,31 +97,31 @@ cAxn <- function(tableslist,x,i,m,n){
     }
 
 
-
-    #function calculation
-      if(n1==0){
         min=m1
         d=log(1+i1)
+    #function calculation
+      if(n1==0){
+        if(b==0){raxc[j]=0}else{
         ft <- function(s) {
           s1=s
           exp(-d*s)*pxt(tableslist1,x=x1,t=s1)
         }
         a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE)
-        a=a$value
-        raxc[j]=1-(d*a)
 
-      }else{
-        min=m1
-        d=log(1+i1)
-        ft <- function(s) {
-          s1=s
-          exp(-d*s)*pxt(tableslist1,x=x1,t=s1)*((-1/2)*(log(pxt(tableslist1,x=x1+s1-1,t=1))+log(pxt(tableslist1,x=x1+s1,t=1))))
+        raxc[j]=(1-(d*a$value))*b
+        }}else{
+
+        if(b==0){raxc[j]=0}else{
+          ft <- function(s) {
+            s1=s
+            exp(-d*s)*pxt(tableslist1,x=x1,t=s1)*((-1/2)*(log(pxt(tableslist1,x=x1+s1-1,t=1))+log(pxt(tableslist1,x=x1+s1,t=1))))
+          }
+          a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE)
+          raxc[j]=a$value
         }
-        a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE)
-        raxc[j]=a$value*b
-        b=1
-      }
 
+      }
+    b=1
     }
     raxc
 
