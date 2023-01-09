@@ -7,7 +7,7 @@ table=c(at2000f)
 
 
 test_that("annuities_v_at2000f", {
-  for(j in 1:115){
+  for(j in 0:115){
 
     daxn=axn(at2000f,x=j,i=0.05,k=12,payment = 'arrears' )
     uaxn=axn(at2000f,x=j,i=0.05,k=12,payment = "advance")
@@ -23,7 +23,7 @@ test_that("annuities_v_at2000f", {
 })
 
 test_that("annuities_v_at2000m", {
-  for(j in 1:115){
+  for(j in 0:115){
 
     daxn=axn(at2000m,x=j,i=0.05,k=12,payment = 'arrears' )
     uaxn=axn(at2000m,x=j,i=0.05,k=12,payment = "advance")
@@ -39,7 +39,7 @@ test_that("annuities_v_at2000m", {
 })
 
 test_that("annuities_t_at2000f", {
-  for(j in 1:115){
+  for(j in 0:115){
     p=116-j
     daxn=axn(at2000f,x=j,i=0.05,n=p,k=12,payment = 'arrears' )
     uaxn=axn(at2000f,x=j,i=0.05,n=p,k=12,payment = "advance")
@@ -55,7 +55,7 @@ test_that("annuities_t_at2000f", {
 })
 
 test_that("annuities_t_at2000m", {
-  for(j in 1:115){
+  for(j in 0:115){
     p=116-j
     daxn=axn(at2000m,x=j,i=0.05,n=p,k=12,payment = 'arrears' )
     uaxn=axn(at2000m,x=j,i=0.05,n=p,k=12,payment = "advance")
@@ -71,7 +71,7 @@ test_that("annuities_t_at2000m", {
 })
 
 test_that("annuities_vd_at2000m", {
-  for(j in 1:115){
+  for(j in 0:115){
     p=116-j
 
     daxn=axn(at2000m,x=0,i=0.05,m=j,k=12,payment = 'arrears' )
@@ -88,7 +88,7 @@ test_that("annuities_vd_at2000m", {
 })
 
 test_that("annuities_td_at2000m", {
-  for(j in 1:115){
+  for(j in 0:115){
     p=116-j
 
     daxn=axn(at2000m,x=0,i=0.05,n=p,m=j,k=12,payment = 'arrears' )

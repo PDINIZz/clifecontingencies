@@ -36,9 +36,9 @@ cAxn <- function(tableslist,x,i,m,n){
     n=NULL
   }
 
-
-  raxc=0
-  b=1
+  #definition of transition variables
+  rAxc=0
+  nvar=1
 
   #conditions for function
   for (j in 1:length(x)) {
@@ -87,7 +87,7 @@ cAxn <- function(tableslist,x,i,m,n){
         max=n1
       }
       if(any(x1>=w,x1+m1>=w)){
-        b=0
+        nvar=0
         }
     }
 
@@ -95,35 +95,38 @@ cAxn <- function(tableslist,x,i,m,n){
     if(any(is.infinite(x1), is.infinite(n1), is.infinite(m1))){
       stop("infinite values provided in x, n or m")
     }
-
+    z=1
+    if(x==0){
+      z=0
+    }
 
         min=m1
         d=log(1+i1)
     #function calculation
       if(n1==0){
-        if(b==0){raxc[j]=0}else{
+        if(nvar==0){raxc[j]=0}else{
         ft <- function(s) {
           s1=s
           exp(-d*s)*pxt(tableslist1,x=x1,t=s1)
         }
         a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE)
 
-        raxc[j]=(1-(d*a$value))*b
+        rAxc[j]=(1-(d*a$value))*nvar
         }}else{
 
-        if(b==0){raxc[j]=0}else{
+        if(nvar==0){rAxc[j]=0}else{
           ft <- function(s) {
             s1=s
-            exp(-d*s)*pxt(tableslist1,x=x1,t=s1)*((-1/2)*(log(pxt(tableslist1,x=x1+s1-1,t=1))+log(pxt(tableslist1,x=x1+s1,t=1))))
+            exp(-d*s)*pxt(tableslist1,x=x1,t=s1)*((pxt(tableslist1,x=x1+s1,t=z))/(1-pxt(tableslist1,x=x1+s1,t=z)))
           }
           a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE)
-          raxc[j]=a$value
+          rAxc[j]=a$value
         }
 
       }
-    b=1
+    nvar=1
     }
-    raxc
+    rAxc
 
 
 }

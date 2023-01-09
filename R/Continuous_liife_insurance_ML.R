@@ -1,6 +1,7 @@
 #' @export
 cAxyzn <- function(tableslist,x,i,m,n, status ="joint"){
 
+
   #conditions
 
   if(missing(tableslist)){
@@ -24,25 +25,30 @@ cAxyzn <- function(tableslist,x,i,m,n, status ="joint"){
     stop('Parameters other than "joint" and "last"')
   }
 
-  #conditions for function
-  b=1
-  k=0
-  for(ll in 1:length(x)){
-    if(k<=x[ll]){
-      k=x[ll]
-      j=ll
+  #definition of transition variables
+  vars=1
+  vmax=0
+  raxyzc=0
+
+  #conditions max min
+  for(nmax in 1:length(x)){
+    if(vmax<=x[nmax]){
+      vmax=x[nmax]
+      j=nmax
     }
   }
-  k1=100000
-  for(ll1 in 1:length(x)){
-    if(k1>=x[ll1]){
-      k1=x[ll1]
-      j1=ll1
+  vmin=100000
+  for(nmin in 1:length(x)){
+    if(vmin>=x[nmin]){
+      vmin=x[nmin]
+      j1=nmin
     }
   }
+
+  #Conditions for function
 
   w=length(tableslist[[j]]@lx)
-
+  w1=length(tableslist[[j1]]@lx)
   if(missing(x)){
     stop('REQUIRED TO DECLARE THE AGE "x"')
   }
@@ -72,64 +78,95 @@ cAxyzn <- function(tableslist,x,i,m,n, status ="joint"){
   }
   if(any(n+x>w,n+m+x>w)){
     if(any(x<w,x+m<w)){
-      n1=w-(x+m)
+      n=w-(x+m)
       max=n
     }
     if(any(x>=w,x+m>=w)){
-      b=0}
+      vars=0
+    }
   }
-  rAxyc=0
+
+  #function
+  min=m
+  d=log(1+i)
+
   if(status =="joint"){
 
     if(n==0){
       min=m
       d=log(1+i)
       ft <- function(s) {
-        s1=s[[1]]
-        exp(-d*s)*pxyzt(tableslist,x=x,t=s1)
+        s1=s
+        allpxt1 <-prod(sapply(1:length(tableslist), function(h){pxt(tableslist[[h]], x[h], t=s1[[1]])}))
+        allpxt2 <-prod(sapply(1:length(tableslist), function(h){pxt(tableslist[[h]], x[h], t=s1[[2]])}))
+        out=c(allpxt1, allpxt2)
+
+        exp(-d*s)*out
       }
-      a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE)
+      a=suppressWarnings(integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE))
       a=a$value
-      rAxyc=1-(d*a)
+      rAxyzc=1-(d*a)*vars
 
     }else{
-      min=m
-      d=log(1+i)
       ft <- function(s) {
-        s1=s[[1]]
-        exp(-d*s)*pxyzt(tableslist,x=x,t=s1)*((-1/2)*(log(pxyzt(tableslist,x=x+s1-1,t=1))+log(pxyzt(tableslist,x=x+s1,t=1))))
+      s1=s
+      allpxt1 <-prod(sapply(1:length(tableslist), function(h){pxt(tableslist[[h]], x[h], t=s1[[1]])}))
+      allpxt2 <-prod(sapply(1:length(tableslist), function(h){pxt(tableslist[[h]], x[h], t=s1[[2]])}))
+      out=c(allpxt1, allpxt2)
+
+      allpxt11 <-prod(sapply(1:length(tableslist), function(h){pxt(tableslist[[h]],(x[h]+s1[[1]]-1), 1)}))
+      allpxt21 <-prod(sapply(1:length(tableslist), function(h){pxt(tableslist[[h]],(x[h]+s1[[2]]-1), 1)}))
+      out1=c(allpxt11, allpxt21)
+
+      allpxt12 <-prod(sapply(1:length(tableslist), function(h){pxt(tableslist[[h]],(x[h]+s1[[1]]), t=1)}))
+      allpxt22 <-prod(sapply(1:length(tableslist), function(h){pxt(tableslist[[h]],(x[h]+s1[[2]]), t=1)}))
+      out2=c(allpxt12, allpxt22)
+
+      exp(-d*s)*out*((-1/2)*(log(out1)+log(out2)))
       }
-      a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE)
-      a=a$value
-      rAxyc=a
+      a=suppressWarnings(integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE))
+      rAxyzc=a$value*vars
     }
-    return(rAxyc)
+    return(rAxyzc)
   }
 
   if(status=="last"){
     if(n==0){
-      min=m
-      d=log(1+i)
       ft <- function(s) {
-        s1=s[[1]]
-        exp(-d*s)*(pxyzt(tableslist,x=x,t=s1,status="last"))
+      s1=s
+      allpxt1 <-1-prod(sapply(1:length(tableslist), function(h){qxt(tableslist[[h]], x[h], t=s1[[1]])}))
+      allpxt2 <-1-prod(sapply(1:length(tableslist), function(h){qxt(tableslist[[h]], x[h], t=s1[[2]])}))
+      out=c(allpxt1, allpxt2)
+
+      exp(-d*s)*out
       }
-      a=integrate(ft,min,max1,subdivisions= 10000,stop.on.error = FALSE)
-      a=a$value
-      rAxyc=1-(d*a)
+
+      a=suppressWarnings(integrate(ft,min,max1,subdivisions= 10000,stop.on.error = FALSE))
+      rAxyzc=(1-(d*a$value))*vars
 
     }else{
       min=m
       d=log(1+i)
       ft <- function(s) {
-        s1=s[[1]]
-        exp(-d*s)*pxyzt(tableslist,x=x,t=s1,status="last")*((-1/2)*(log(pxyzt(tableslist,x=x+s1-1,t=1,status="last"))+log(pxyzt(tableslist,x=x+s1,t=1,status="last"))))
+        s1=s
+        allpxt1 <-1-prod(sapply(1:length(tableslist), function(h){qxt(tableslist[[h]], x[h], t=s1[[1]])}))
+        allpxt2 <-1-prod(sapply(1:length(tableslist), function(h){qxt(tableslist[[h]], x[h], t=s1[[2]])}))
+        out=c(allpxt1, allpxt2)
+
+        allpxt11 <-1-prod(sapply(1:length(tableslist), function(h){qxt(tableslist[[h]], (x[h]+s1[[1]]-1), t=1)}))
+        allpxt21 <-1-prod(sapply(1:length(tableslist), function(h){qxt(tableslist[[h]], (x[h]+s1[[2]]-1), t=1)}))
+        out1=c(allpxt11, allpxt21)
+
+        allpxt12 <-1-prod(sapply(1:length(tableslist), function(h){qxt(tableslist[[h]], (x[h]+s1[[1]]), t=1)}))
+        allpxt22 <-1-prod(sapply(1:length(tableslist), function(h){qxt(tableslist[[h]], (x[h]+s1[[2]]), t=1)}))
+        out2=c(allpxt12, allpxt22)
+
+        exp(-d*s)*out*((-1/2)*(log(out1)+log(out2)))
       }
-      a=integrate(ft,min,max1,subdivisions= 10000,stop.on.error = FALSE)
-      a=a$value
-      rAxyc=a
+      a=suppressWarnings(integrate(ft,min,max1,subdivisions= 10000,stop.on.error = FALSE))
+      rAxyzc=a$value*vars
     }
-    return(rAxyc)
+    return(rAxyzc)
   }
 }
 

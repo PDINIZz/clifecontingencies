@@ -7,8 +7,8 @@ table=c(at2000f,at2000m)
 
 
 test_that("annuities_v_table", {
-  for(j in 1:113){
-    l=114-j
+  for(j in 1:115){
+    l=115-j
     p=c(j,l)
 
     dAxyzn=Axyzn(table,x=p,i=0.05,status="joint")
@@ -26,8 +26,8 @@ test_that("annuities_v_table", {
 
 
 test_that("annuities_v_table", {
-  for(j in 1:113){
-    l=114-j
+  for(j in 1:115){
+    l=115-j
     p=c(l,j)
 
     dAxyzn=Axyzn(table,x=p,i=0.05,status="last")

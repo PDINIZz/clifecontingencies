@@ -24,25 +24,27 @@ caxyzn <- function(tableslist,x,i,m,n, status ="joint"){
     stop('Parameters other than "joint" and "last"')
   }
 
-  #conditions for function
-  b=1
-  k=0
+  #definition of transition variables
+  vars=1
+  vmax=0
+  raxyzc=0
 
-  for(ll in 1:length(x)){
-    if(k<=x[ll]){
-      k=x[ll]
-      j=ll
+  #conditions max min
+  for(nmax in 1:length(x)){
+    if(vmax<=x[nmax]){
+      vmax=x[nmax]
+      j=nmax
     }
   }
-  k1=100000
-  for(ll1 in 1:length(x)){
-    if(k1>=x[ll1]){
-      k1=x[ll1]
-      j1=ll1
+  vmin=100000
+  for(nmin in 1:length(x)){
+    if(vmin>=x[nmin]){
+      vmin=x[nmin]
+      j1=nmin
     }
   }
 
-
+  #Conditions for function
 
   w=length(tableslist[[j]]@lx)
   w1=length(tableslist[[j1]]@lx)
@@ -79,34 +81,52 @@ caxyzn <- function(tableslist,x,i,m,n, status ="joint"){
       max=n
     }
     if(any(x>=w,x+m>=w)){
-      b=0
+      vars=0
       }
   }
 
+  #function
       min=m
       d=log(1+i)
-      raxyzc=0
+
+
       if(status =="joint"){
 
+
+
         ft <- function(s) {
-          s1=s[[1]]
-          exp(-d*s)*pxyzt(tableslist,x=x,t=s1)
+          s1=s
+          allpxt1 <-prod(sapply(1:length(tableslist), function(h){pxt(tableslist[[h]], x[h], t=s1[[1]])}))
+          allpxt2 <-prod(sapply(1:length(tableslist), function(h){pxt(tableslist[[h]], x[h], t=s1[[2]])}))
+          out=c(allpxt1, allpxt2)
+
+          exp(-d*s)*out
         }
 
-        a=integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE)
-        raxyzc=a$value+0.5+((1/11)*(d*(log(pxyzt(tableslist,x=x+m-1,t=1))+log(pxyzt(tableslist,x=x+m,t=1)))))
+        a=suppressWarnings(integrate(ft,min,max,subdivisions= 10000,stop.on.error = FALSE))
+
+        raxyzc=a$value*vars
       }
 
       if(status=="last"){
         ft <- function(s) {
-          s1=s[[1]]
-          exp(-d*s)*pxyzt(tableslist,x=x,t=s1,status="last")
+          s1=s
+          allpxt1 <-prod(sapply(1:length(tableslist), function(h){qxt(tableslist[[h]], x[h], t=s1[[1]])}))
+          allpxt2 <-prod(sapply(1:length(tableslist), function(h){qxt(tableslist[[h]], x[h], t=s1[[2]])}))
+
+          allpxt11=1-allpxt1
+          allpxt21=1-allpxt2
+          out=c(allpxt11, allpxt21)
+
+          exp(-d*s)*out
         }
 
-        a=integrate(ft,min,max1,subdivisions= 10000,stop.on.error = FALSE)
-        raxyzc=a$value*b
+        a=suppressWarnings(integrate(ft,min,max1,subdivisions= 10000,stop.on.error = FALSE))
+
+        raxyzc=a$value*vars
       }
-      b=1
-    raxyzc
+
+
+      raxyzc
 
     }
